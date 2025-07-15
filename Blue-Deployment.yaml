@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-blue
+  namespace: blue
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: blue
+    spec:
+      securityContext:
+        fsGroup: 2001
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: blue-secrets
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: blue-secrets
+              key: MYSQL_PASSWORD
+        - name: MYSQL_HOST
+          value: "172.23.23.219"
+        - name: MYSQL_PORT
+          value: "3306"
+        volumeMounts:
+        - name: nginx-storage
+          mountPath: /usr/share/nginx/html
+        resources:
+          requests:
+            cpu: "2"
+            memory: "1Gi"
+          limits:
+            cpu: "4"
+            memory: "1Gi"
+      volumes:
+      - name: nginx-storage
+        persistentVolumeClaim:
+          claimName: nginx-pvc
