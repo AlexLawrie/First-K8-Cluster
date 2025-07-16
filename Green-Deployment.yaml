@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-green
+  namespace: green
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+      version: green
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: green
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: green-secrets
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: green-secrets
+              key: MYSQL_PASSWORD
+        - name: MYSQL_HOST
+          value: "172.23.23.219"
+        - name: MYSQL_PORT
+          value: "3306"
