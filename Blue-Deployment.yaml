@@ -17,6 +17,9 @@ spec:
     spec:
       securityContext:
         fsGroup: 2001
+        runAsUser: 1000
+        runAsGroup: 3000
+        runAsNonRoot: true
       containers:
       - name: nginx
         image: nginx
@@ -47,6 +50,12 @@ spec:
           limits:
             cpu: "4"
             memory: "1Gi"
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
       volumes:
       - name: nginx-storage
         persistentVolumeClaim:
