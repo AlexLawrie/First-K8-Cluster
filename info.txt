@@ -1,2 +1,0 @@
-sql pass: NewStr0ngP@ssword!
-group name is called nginxgroup and has 2001 permissions
